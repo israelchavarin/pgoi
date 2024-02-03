@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
-import db from "../database.js";
+import { sequelize } from "../database/database.js";
 
-const User = db.define(
-  "User",
+export const User = sequelize.define(
+  "user",
   {
     user_id: {
       type: DataTypes.UUID,
@@ -73,5 +73,3 @@ const User = db.define(
     timestamps: true,
   }
 );
-
-module.exports = User;

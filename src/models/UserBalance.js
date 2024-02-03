@@ -1,9 +1,9 @@
 import { DataTypes } from "sequelize";
-import db from "../database.js";
-import User from "./user.js";
+import { sequelize } from "../database/database.js";
+import { User } from "./User.js";
 
-const UserBalance = db.define(
-  "UserBalance",
+export const UserBalance = sequelize.define(
+  "user_balance",
   {
     user_id: {
       type: DataTypes.UUID,
@@ -26,5 +26,3 @@ const UserBalance = db.define(
 
 User.hasOne(UserBalance, { foreignKey: "user_id" });
 UserBalance.belongsTo(User, { foreignKey: "user_id" });
-
-module.exports = UserBalance;

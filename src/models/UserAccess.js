@@ -1,9 +1,9 @@
 import { DataTypes } from "sequelize";
-import db from "../database.js";
-import User from "./user.js";
+import { sequelize } from "../database/database.js";
+import { User } from "./User.js";
 
-const UserAccess = db.define(
-  "UserAccess",
+export const UserAccess = sequelize.define(
+  "user_access",
   {
     user_id: {
       type: DataTypes.UUID,
@@ -26,5 +26,3 @@ const UserAccess = db.define(
 
 User.hasOne(UserAccess, { foreignKey: "user_id" });
 UserAccess.belongsTo(User, { foreignKey: "user_id" });
-
-module.exports = UserAccess;

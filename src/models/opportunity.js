@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
-import db from "../database.js";
+import { sequelize } from "../database/database.js";
 
-const Opportunity = db.define(
-  "Opportunity",
+export const Opportunity = sequelize.define(
+  "opportunity",
   {
     opportunity_id: {
       type: DataTypes.UUID,
@@ -40,5 +40,3 @@ const Opportunity = db.define(
     timestamps: true,
   }
 );
-
-module.exports = Opportunity;

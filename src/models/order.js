@@ -1,10 +1,10 @@
 import { DataTypes } from "sequelize";
-import db from "../database.js";
-import User from "./user.js";
-import Opportunity from "./opportunity.js";
+import { sequelize } from "../database/database.js";
+import { User } from "./User.js";
+import { Opportunity } from "./Opportunity.js";
 
-const Order = db.define(
-  "Order",
+export const Order = sequelize.define(
+  "order",
   {
     order_id: {
       type: DataTypes.UUID,
@@ -46,9 +46,5 @@ const Order = db.define(
 Order.belongsTo(User, { foreignKey: "user_id" });
 User.hasMany(Order, { foreignKey: "user_id" });
 
-Order.belongsTo(Opportunity, {
-  foreignKey: "opportunity_id",
-});
+Order.belongsTo(Opportunity, { foreignKey: "opportunity_id" });
 Opportunity.hasMany(Order, { foreignKey: "opportunity_id" });
-
-module.exports = Order;
