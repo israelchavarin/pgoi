@@ -38,9 +38,40 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     await t.rollback();
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-export const login = (req, res) => res.send("logged in");
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const userAccess = await UserAccess.findOne({
+      where: { email },
+      attributes: ["user_id", "email", "password"],
+    });
+
+    if (!userAccess) return res.status(400).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, userAccess.password);
+
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
+
+    const userIdentity = await User.findOne({
+      where: { user_id: userAccess.user_id },
+      attributes: ["given_name", "family_name"],
+    });
+
+    const token = await createAccessToken({ id: userAccess.user_id });
+
+    res.cookie("token", token);
+    res.json({
+      id: userAccess.user_id,
+      given_name: userIdentity.given_name,
+      family_name: userIdentity.family_name,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
