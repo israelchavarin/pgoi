@@ -1,12 +1,6 @@
 import app from "./app.js";
 import { sequelize } from "./database/database.js";
 
-import "./models/Opportunity.js";
-import "./models/User.js";
-import "./models/UserAccess.js";
-import "./models/UserBalance.js";
-import "./models/Order.js";
-
 async function main() {
   try {
     await sequelize.sync();
