@@ -26,11 +26,13 @@ export const User = sequelize.define(
       // the rfc in Mexico
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     national_identifier: {
       // the curp in Mexico
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     street: {
       type: DataTypes.TEXT,

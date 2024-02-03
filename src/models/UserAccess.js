@@ -13,6 +13,7 @@ export const UserAccess = sequelize.define(
     email: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.TEXT,

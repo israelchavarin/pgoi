@@ -13,6 +13,7 @@ export const Opportunity = sequelize.define(
     opportunity_name: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     description: {
       type: DataTypes.TEXT,
