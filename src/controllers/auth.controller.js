@@ -80,3 +80,17 @@ export const logout = (req, res) => {
   res.cookie("token", "", { expires: new Date(0) });
   return res.sendStatus(200);
 };
+
+export const showProfile = async (req, res) => {
+  const userFound = await User.findOne({
+    where: { user_id: req.userInfo.id },
+    attributes: ["given_name", "family_name"],
+  });
+
+  if (!userFound) return res.status(400).json({ message: "User not found" });
+
+  return res.json({
+    given_name: userFound.given_name,
+    family_name: userFound.family_name,
+  });
+};
