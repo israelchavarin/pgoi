@@ -3,7 +3,7 @@ import { sequelize } from "./database/database.js";
 
 async function main() {
   try {
-    await sequelize.sync();
+    // await sequelize.sync();
 
     const port = 3000;
     app.listen(port);

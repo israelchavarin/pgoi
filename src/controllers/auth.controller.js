@@ -1,8 +1,8 @@
+import bcrypt from "bcryptjs";
 import { User } from "../models/User.js";
 import { UserAccess } from "../models/UserAccess.js";
 import { UserBalance } from "../models/UserBalance.js";
 import { sequelize } from "../database/database.js";
-import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
 
 export const registerUser = async (req, res) => {
