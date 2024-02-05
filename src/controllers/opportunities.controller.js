@@ -1,4 +1,7 @@
+import currency from "currency.js";
 import { Opportunity } from "../models/Opportunity.js";
+import { UserBalance } from "../models/UserBalance.js";
+import { Order } from "../models/Order.js";
 
 export const getOpportunities = async (req, res) => {
   try {
@@ -11,11 +14,10 @@ export const getOpportunities = async (req, res) => {
 
 export const getOpportunity = async (req, res) => {
   try {
-    const oppty = await Opportunity.findByPk(req.params.oppId);
-    if (!oppty || oppty.available === false)
-      return res
-        .status(404)
-        .json({ message: "Opportunity not available at the moment" });
+    const oppty = await Opportunity.findByPk(req.params.opportunity_id);
+    if (!oppty || oppty.available === false) {
+      return res.status(404).json({ message: "Opportunity not available" });
+    }
     res.json(oppty);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -24,14 +26,17 @@ export const getOpportunity = async (req, res) => {
 
 export const updateOpportunity = async (req, res) => {
   try {
-    const { oppId } = req.params;
-    const { investment_amount } = req.body;
+    const { opportunity_id } = req.params;
+    const { user_id, investment_amount, term_in_days } = req.body;
 
-    const oppty = await Opportunity.findByPk(oppId);
+    const userBalances = await UserBalance.findByPk(user_id);
+    if (!userBalances) {
+      return res.status(400).json({ message: "User could not be identified" });
+    }
+
+    const oppty = await Opportunity.findByPk(opportunity_id);
     if (!oppty || oppty.available === false) {
-      return res
-        .status(404)
-        .json({ error: "Opportunity not available at the moment" });
+      return res.status(404).json({ error: "Opportunity not available" });
     }
 
     if (investment_amount < oppty.minimum_investment) {
@@ -57,13 +62,28 @@ export const updateOpportunity = async (req, res) => {
     }
 
     await oppty.save();
-    // At this moment:
-    // -the current_balance of the user has to be decreased by investment_amount
-    // -the used_balance has to be increased by investment_amount
-    // Also an order must be created
-    // The opportunity has to be listed in the user's profile
-    // Meaning I need to modify the bd
-    // Maybe a new table like user_investments
+
+    // Update balances of user after investment
+    const investmentCurrency = currency(investment_amount);
+
+    userBalances.current_balance = currency(
+      userBalances.current_balance
+    ).subtract(investmentCurrency).value;
+
+    userBalances.used_balance = currency(userBalances.used_balance).add(
+      investmentCurrency
+    ).value;
+
+    await userBalances.save();
+
+    // Create order
+    await Order.create({
+      user_id,
+      opportunity_id,
+      investment_amount,
+      agreed_percentage: oppty.profit_percentage,
+      term_in_days,
+    });
 
     return res.json({
       message: "Investment successful",

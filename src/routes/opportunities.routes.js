@@ -10,8 +10,12 @@ const router = Router();
 
 router.get("/opportunities", authRequired, getOpportunities);
 
-router.get("/opportunities/:oppId", authRequired, getOpportunity);
+router.get("/opportunities/:opportunity_id", authRequired, getOpportunity);
 
-router.patch("/opportunities/:oppId/invest", authRequired, updateOpportunity);
+router.patch(
+  "/opportunities/:opportunity_id/invest",
+  authRequired,
+  updateOpportunity
+);
 
 export default router;
