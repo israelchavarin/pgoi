@@ -82,15 +82,19 @@ export const logout = (req, res) => {
 };
 
 export const showProfile = async (req, res) => {
-  const userFound = await User.findOne({
-    where: { user_id: req.userInfo.id },
-    attributes: ["given_name", "family_name"],
-  });
+  try {
+    const userFound = await User.findOne({
+      where: { user_id: req.userInfo.id },
+      attributes: ["given_name", "family_name"],
+    });
 
-  if (!userFound) return res.status(400).json({ message: "User not found" });
+    if (!userFound) return res.status(400).json({ message: "User not found" });
 
-  return res.json({
-    given_name: userFound.given_name,
-    family_name: userFound.family_name,
-  });
+    return res.json({
+      given_name: userFound.given_name,
+      family_name: userFound.family_name,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
