@@ -28,6 +28,7 @@ export const updateOpportunity = async (req, res) => {
   try {
     const { opportunity_id } = req.params;
     const { user_id, investment_amount, term_in_days } = req.body;
+    const investmentCurrency = currency(investment_amount);
 
     const userBalances = await UserBalance.findByPk(user_id);
     if (!userBalances) {
@@ -39,19 +40,30 @@ export const updateOpportunity = async (req, res) => {
       return res.status(404).json({ error: "Opportunity not available" });
     }
 
-    if (investment_amount < oppty.minimum_investment) {
+    const currentBalanceCurrency = currency(userBalances.current_balance);
+    const minInvestCurrency = currency(oppty.minimum_investment);
+    const limitInvestCurrency = currency(oppty.investment_limit);
+
+    if (investmentCurrency.value > currentBalanceCurrency.value) {
       return res.status(400).json({
-        error: `You must invest at least: ${oppty.minimum_investment}`,
+        error: `You only have ${currentBalanceCurrency.format()} of the ${investmentCurrency.format()}`,
       });
     }
 
-    if (investment_amount > oppty.investment_limit) {
+    if (investmentCurrency.value < minInvestCurrency.value) {
       return res.status(400).json({
-        error: `You cannot exceed the limit of ${oppty.investment_limit}`,
+        error: `You must invest at least: ${minInvestCurrency.format()}`,
       });
     }
 
-    oppty.investment_limit -= investment_amount;
+    if (investmentCurrency.value > limitInvestCurrency.value) {
+      return res.status(400).json({
+        error: `You cannot exceed the limit of ${limitInvestCurrency.format()}`,
+      });
+    }
+
+    oppty.investment_limit =
+      limitInvestCurrency.subtract(investmentCurrency).value;
 
     if (oppty.investment_limit < oppty.minimum_investment) {
       oppty.minimum_investment = 1;
@@ -64,8 +76,6 @@ export const updateOpportunity = async (req, res) => {
     await oppty.save();
 
     // Update balances of user after investment
-    const investmentCurrency = currency(investment_amount);
-
     userBalances.current_balance = currency(
       userBalances.current_balance
     ).subtract(investmentCurrency).value;
@@ -90,7 +100,6 @@ export const updateOpportunity = async (req, res) => {
       remainingLimit: oppty.investment_limit,
     });
   } catch (error) {
-    console.error("Error updating data:", error);
     res.status(500).json({ message: error.message });
   }
 };
