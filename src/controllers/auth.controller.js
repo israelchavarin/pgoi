@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
 import { User } from "../models/User.js";
 import { UserAccess } from "../models/UserAccess.js";
 import { UserBalance } from "../models/UserBalance.js";
@@ -8,10 +9,30 @@ import { createAccessToken } from "../libs/jwt.js";
 export const registerUser = async (req, res) => {
   const t = await sequelize.transaction();
 
-  const { password } = req.body;
-
   try {
+    const { tax_identifier, national_identifier, email, password } = req.body;
     const passHashed = await bcrypt.hash(password, 10);
+    const existingUsers = await User.findAll({
+      where: {
+        [Op.or]: [{ tax_identifier }, { national_identifier }],
+      },
+    });
+    const existingAccesses = await UserAccess.findAll({
+      where: { email },
+    });
+
+    if (existingUsers.length !== 0) {
+      return res.status(400).json({
+        message:
+          "Tax identifier or National identifier provided already in use",
+      });
+    }
+
+    if (existingAccesses.length !== 0) {
+      return res.status(400).json({
+        message: "Email provided already in use",
+      });
+    }
 
     const newUser = await User.create({ ...req.body }, { transaction: t });
 
