@@ -5,6 +5,8 @@ import {
   getOpportunity,
   updateOpportunity,
 } from "../controllers/opportunities.controller.js";
+import { validateSchema } from "../middlewares/validator.middleware.js";
+import { investSchema } from "../schemas/opportunities.schema.js";
 
 const router = Router();
 
@@ -15,6 +17,7 @@ router.get("/opportunities/:opportunity_id", authRequired, getOpportunity);
 router.patch(
   "/opportunities/:opportunity_id/invest",
   authRequired,
+  validateSchema(investSchema),
   updateOpportunity
 );
 
