@@ -4,8 +4,9 @@ import { Order } from "../models/Order.js";
 
 export const getOrders = async (req, res) => {
   try {
-    const { user_id } = req.params;
-    const userOrders = await Order.findAll({ where: { user_id } });
+    const userOrders = await Order.findAll({
+      where: { user_id: req.userInfo.id },
+    });
     res.json(userOrders);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -14,11 +15,10 @@ export const getOrders = async (req, res) => {
 
 export const makeDeposit = async (req, res) => {
   try {
-    const { user_id } = req.params;
     const { deposit_amount } = req.body;
     const investmentCurrency = currency(deposit_amount);
 
-    const userBalances = await UserBalance.findByPk(user_id);
+    const userBalances = await UserBalance.findByPk(req.userInfo.id);
     if (!userBalances) {
       return res.status(400).json({ message: "User could not be identified" });
     }

@@ -15,7 +15,7 @@ router.post("/registration", validateSchema(registerSchema), registerUser);
 
 router.post("/login", validateSchema(loginSchema), login);
 
-router.post("/logout", logout);
+router.post("/logout", authRequired, logout);
 
 router.get("/profile", authRequired, showProfile);
 

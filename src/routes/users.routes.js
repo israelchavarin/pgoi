@@ -6,10 +6,10 @@ import { depositSchema } from "../schemas/users.schema.js";
 
 const router = Router();
 
-router.get("/users/:user_id/orders", authRequired, getOrders);
+router.get("/profile/orders", authRequired, getOrders);
 
 router.patch(
-  "/users/:user_id/deposit",
+  "/profile/deposit",
   authRequired,
   validateSchema(depositSchema),
   makeDeposit

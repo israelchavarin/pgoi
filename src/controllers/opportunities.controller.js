@@ -27,10 +27,10 @@ export const getOpportunity = async (req, res) => {
 export const updateOpportunity = async (req, res) => {
   try {
     const { opportunity_id } = req.params;
-    const { user_id, investment_amount, term_in_days } = req.body;
+    const { investment_amount, term_in_days } = req.body;
     const investmentCurrency = currency(investment_amount);
-
-    const userBalances = await UserBalance.findByPk(user_id);
+    // transaction
+    const userBalances = await UserBalance.findByPk(req.userInfo.id);
     if (!userBalances) {
       return res.status(400).json({ message: "User could not be identified" });
     }
@@ -88,7 +88,7 @@ export const updateOpportunity = async (req, res) => {
 
     // Create order
     await Order.create({
-      user_id,
+      user_id: req.userInfo.id,
       opportunity_id,
       investment_amount,
       agreed_percentage: oppty.profit_percentage,
