@@ -21,6 +21,7 @@ export default function LoginForm() {
   const onSubmit = (e) => {
     e.preventDefault();
     handleSubmit(formData);
+    console.log(document.cookie);
   };
 
   return (
