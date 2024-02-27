@@ -9,13 +9,13 @@ services:
       - POSTGRES_PASSWORD=th3DevP@ss
       - POSTGRES_DB=pgoi
   backend:
-    build: .
+    build: ./server
     ports:
       - "3000:3000"
     depends_on:
       - postgresql
   frontend:
-    build: ./frontend
+    build: ./client
     ports:
       - "5173:5173"
     stdin_open: true

@@ -2,6 +2,7 @@ import "./styles.css";
 import RegistrationForm from "./components/RegistrationForm";
 import LoginForm from "./components/LoginForm";
 import Profile from "./components/Profile";
+import Logout from "./components/Logout";
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
       <div>
         <RegistrationForm />
         <LoginForm />
+        <Logout />
         <Profile />
       </div>
     </div>

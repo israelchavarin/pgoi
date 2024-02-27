@@ -146,7 +146,7 @@ export default function RegistrationForm() {
           onChange={handleChange}
         />
         <button type='submit' disabled={isLoading}>
-          {isLoading ? "Loading..." : "Iniciar sesión"}
+          {isLoading ? "Loading..." : "Registrarse"}
         </button>
       </form>
       {error && <p>Error: {error.message}</p>}
