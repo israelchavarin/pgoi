@@ -35,10 +35,11 @@ export const registerUser = async (req, res) => {
     }
 
     const newUser = await User.create({ ...req.body }, { transaction: t });
+    const { user_id, given_name, family_name } = newUser;
 
     await UserAccess.create(
       {
-        user_id: newUser.user_id,
+        user_id,
         email: req.body.email,
         password: passHashed,
       },
@@ -47,15 +48,20 @@ export const registerUser = async (req, res) => {
       }
     );
 
-    await UserBalance.create({ user_id: newUser.user_id }, { transaction: t });
+    await UserBalance.create({ user_id }, { transaction: t });
 
     await t.commit();
 
-    const token = await createAccessToken({ id: newUser.user_id });
+    const token = await createAccessToken({ id: user_id });
 
     res.cookie("token", token);
     res.json({
       message: "User created successfully",
+      data: {
+        user_id,
+        family_name,
+        given_name,
+      },
     });
   } catch (error) {
     await t.rollback();
