@@ -7,9 +7,9 @@ export const getOrders = async (req, res) => {
     const userOrders = await Order.findAll({
       where: { user_id: req.userInfo.id },
     });
-    res.json(userOrders);
+    res.status(200).json({ status: 200, data: userOrders });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
 
@@ -20,7 +20,9 @@ export const makeDeposit = async (req, res) => {
 
     const userBalances = await UserBalance.findByPk(req.userInfo.id);
     if (!userBalances) {
-      return res.status(400).json({ message: "User could not be identified" });
+      return res
+        .status(400)
+        .json({ status: 400, error: "User could not be identified" });
     }
 
     userBalances.current_balance = currency(userBalances.current_balance).add(
@@ -29,11 +31,12 @@ export const makeDeposit = async (req, res) => {
 
     await userBalances.save();
 
-    return res.json({
+    return res.status(200).json({
+      status: 200,
       message: "Deposit successful",
-      newBalance: userBalances.current_balance,
+      data: { newBalance: userBalances.current_balance },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };

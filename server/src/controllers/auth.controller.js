@@ -56,9 +56,9 @@ export const registerUser = async (req, res) => {
     const token = await createAccessToken({ id: user_id });
 
     res.cookie("token", token);
-    res.json({
+    res.status(201).json({
       status: 201,
-      error: "User created successfully",
+      message: "User created successfully",
       data: {
         user_id,
         family_name,
@@ -98,7 +98,7 @@ export const login = async (req, res) => {
     const token = await createAccessToken({ id: userAccess.user_id });
 
     res.cookie("token", token);
-    res.json({
+    res.status(200).json({
       status: 200,
       data: {
         id: userAccess.user_id,
@@ -113,7 +113,7 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
   res.cookie("token", "", { expires: new Date(0) });
-  return res.sendStatus(200);
+  return res.status(200).json({ status: 200, message: "Logout successful" });
 };
 
 export const showProfile = async (req, res) => {
@@ -126,7 +126,7 @@ export const showProfile = async (req, res) => {
     if (!userFound)
       return res.status(400).json({ status: 400, error: "User not found" });
 
-    return res.json({
+    return res.status(200).json({
       status: 200,
       data: {
         given_name: userFound.given_name,

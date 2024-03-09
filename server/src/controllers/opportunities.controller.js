@@ -6,9 +6,9 @@ import { Order } from "../models/Order.js";
 export const getOpportunities = async (req, res) => {
   try {
     const oppties = await Opportunity.findAll({ where: { available: true } });
-    res.json(oppties);
+    res.status(200).json({ status: 200, data: oppties });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
 
@@ -16,11 +16,13 @@ export const getOpportunity = async (req, res) => {
   try {
     const oppty = await Opportunity.findByPk(req.params.opportunity_id);
     if (!oppty || oppty.available === false) {
-      return res.status(404).json({ message: "Opportunity not available" });
+      return res
+        .status(404)
+        .json({ status: 404, error: "Opportunity not available" });
     }
-    res.json(oppty);
+    res.status(200).json({ status: 200, data: oppty });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
 
@@ -32,12 +34,16 @@ export const updateOpportunity = async (req, res) => {
     // transaction
     const userBalances = await UserBalance.findByPk(req.userInfo.id);
     if (!userBalances) {
-      return res.status(400).json({ message: "User could not be identified" });
+      return res
+        .status(400)
+        .json({ status: 400, error: "User could not be identified" });
     }
 
     const oppty = await Opportunity.findByPk(opportunity_id);
     if (!oppty || oppty.available === false) {
-      return res.status(404).json({ error: "Opportunity not available" });
+      return res
+        .status(404)
+        .json({ status: 404, error: "Opportunity not available" });
     }
 
     const currentBalanceCurrency = currency(userBalances.current_balance);
@@ -46,18 +52,21 @@ export const updateOpportunity = async (req, res) => {
 
     if (investmentCurrency.value > currentBalanceCurrency.value) {
       return res.status(400).json({
+        status: 400,
         error: `You only have ${currentBalanceCurrency.format()} of the ${investmentCurrency.format()}`,
       });
     }
 
     if (investmentCurrency.value < minInvestCurrency.value) {
       return res.status(400).json({
+        status: 400,
         error: `You must invest at least: ${minInvestCurrency.format()}`,
       });
     }
 
     if (investmentCurrency.value > limitInvestCurrency.value) {
       return res.status(400).json({
+        status: 400,
         error: `You cannot exceed the limit of ${limitInvestCurrency.format()}`,
       });
     }
@@ -95,11 +104,12 @@ export const updateOpportunity = async (req, res) => {
       term_in_days,
     });
 
-    return res.json({
+    return res.status(200).json({
+      status: 200,
       message: "Investment successful",
-      remainingLimit: oppty.investment_limit,
+      data: { remainingLimit: oppty.investment_limit },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
