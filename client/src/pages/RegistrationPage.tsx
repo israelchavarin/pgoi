@@ -1,13 +1,15 @@
 import { useForm } from "react-hook-form";
 import FormInput from "../components/FormInput";
-import { postData } from "../api/auth";
+import { useAuth } from "../hooks/useAuth";
 
 export default function RegistrationPage() {
   const { register, handleSubmit } = useForm();
+  const { signUp, user } = useAuth();
+
+  console.log(user);
 
   const onSubmit = handleSubmit(async (values) => {
-    const res = await postData("registration", values);
-    console.log(res);
+    signUp(values);
   });
 
   return (
