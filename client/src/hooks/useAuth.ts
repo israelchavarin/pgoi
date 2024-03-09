@@ -5,11 +5,13 @@ import { User } from "../types";
 interface AuthContextType {
   signUp: (user: FieldValues) => Promise<void>;
   user: User | null;
+  isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   signUp: async () => {}, // Initial dummy implementation
   user: null,
+  isAuthenticated: false,
 });
 
 export const useAuth = () => {

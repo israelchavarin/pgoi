@@ -11,11 +11,17 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const signUp = async (user: FieldValues) => {
-    const res = await registerUser(user);
-    console.log(res);
-    setUser(res.data);
+    try {
+      const res = await registerUser(user);
+      if (res.status !== 201) throw new Error(res.error);
+      setUser(res.data);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -23,6 +29,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         signUp,
         user,
+        isAuthenticated,
       }}
     >
       {children}

@@ -23,14 +23,15 @@ export const registerUser = async (req, res) => {
 
     if (existingUsers.length !== 0) {
       return res.status(400).json({
-        message:
-          "Tax identifier or National identifier provided already in use",
+        status: 400,
+        error: "Tax identifier or National identifier provided already in use",
       });
     }
 
     if (existingAccesses.length !== 0) {
       return res.status(400).json({
-        message: "Email provided already in use",
+        status: 400,
+        error: "Email provided already in use",
       });
     }
 
@@ -56,7 +57,8 @@ export const registerUser = async (req, res) => {
 
     res.cookie("token", token);
     res.json({
-      message: "User created successfully",
+      status: 201,
+      error: "User created successfully",
       data: {
         user_id,
         family_name,
@@ -65,7 +67,7 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     await t.rollback();
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
 
@@ -78,12 +80,15 @@ export const login = async (req, res) => {
       attributes: ["user_id", "email", "password"],
     });
 
-    if (!userAccess) return res.status(400).json({ message: "User not found" });
+    if (!userAccess)
+      return res.status(400).json({ status: 400, error: "User not found" });
 
     const isMatch = await bcrypt.compare(password, userAccess.password);
 
     if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ status: 400, error: "Invalid credentials" });
 
     const userIdentity = await User.findOne({
       where: { user_id: userAccess.user_id },
@@ -94,12 +99,15 @@ export const login = async (req, res) => {
 
     res.cookie("token", token);
     res.json({
-      id: userAccess.user_id,
-      given_name: userIdentity.given_name,
-      family_name: userIdentity.family_name,
+      status: 200,
+      data: {
+        id: userAccess.user_id,
+        given_name: userIdentity.given_name,
+        family_name: userIdentity.family_name,
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
 
@@ -115,13 +123,17 @@ export const showProfile = async (req, res) => {
       attributes: ["given_name", "family_name"],
     });
 
-    if (!userFound) return res.status(400).json({ message: "User not found" });
+    if (!userFound)
+      return res.status(400).json({ status: 400, error: "User not found" });
 
     return res.json({
-      given_name: userFound.given_name,
-      family_name: userFound.family_name,
+      status: 200,
+      data: {
+        given_name: userFound.given_name,
+        family_name: userFound.family_name,
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };

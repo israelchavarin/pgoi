@@ -1,12 +1,19 @@
 import { useForm } from "react-hook-form";
 import FormInput from "../components/FormInput";
 import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationPage() {
   const { register, handleSubmit } = useForm();
-  const { signUp, user } = useAuth();
+  const { signUp, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  console.log(user);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/orders");
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = handleSubmit(async (values) => {
     signUp(values);
