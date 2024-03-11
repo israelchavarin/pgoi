@@ -6,12 +6,14 @@ interface AuthContextType {
   signUp: (user: FieldValues) => Promise<void>;
   user: User | null;
   isAuthenticated: boolean;
+  regErrors: string | null;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   signUp: async () => {}, // Initial dummy implementation
   user: null,
   isAuthenticated: false,
+  regErrors: null,
 });
 
 export const useAuth = () => {

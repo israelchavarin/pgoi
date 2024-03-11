@@ -12,15 +12,20 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [regErrors, setRegErrors] = useState<string | null>(null);
 
   const signUp = async (user: FieldValues) => {
     try {
       const res = await registerUser(user);
-      if (res.status !== 201) throw new Error(res.error);
+      if (res.status !== 201) throw new Error(res.error || "Unknown error");
+      // Not using !res.ok because the API returns status code 201 when successful
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (error) {
-      console.log(error);
+      // Necessary to Extract the error message from the error object
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      setRegErrors(errorMessage);
     }
   };
 
@@ -30,6 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signUp,
         user,
         isAuthenticated,
+        regErrors,
       }}
     >
       {children}
