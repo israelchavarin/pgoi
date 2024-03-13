@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import FormInput from "../components/FormInput";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function RegistrationPage() {
   const {
@@ -10,7 +10,7 @@ export default function RegistrationPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signUp, isAuthenticated, regErrors } = useAuth();
+  const { signUp, isAuthenticated, reqErrors } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,10 +24,15 @@ export default function RegistrationPage() {
   });
 
   return (
-    <div className='bg-zinc-800 max-w-md p-10 rounded-md'>
-      <h1>Registration Page</h1>
-      {regErrors && (
-        <div className='bg-red-500 p-2 text-white'>{regErrors}</div>
+    <section className='bg-zinc-800 max-w-md p-10 rounded-md'>
+      <p className='flex gap-x-2 justify-between'>
+        Already have an account?{" "}
+        <Link to='/login' className='text-sky-500'>
+          Sign in
+        </Link>
+      </p>
+      {reqErrors && (
+        <div className='bg-red-500 p-2 text-white'>{reqErrors}</div>
       )}
       <form onSubmit={onSubmit}>
         <FormInput
@@ -133,6 +138,6 @@ export default function RegistrationPage() {
         {errors.password && <p className='text-red-500'>Password required</p>}
         <button>Register</button>
       </form>
-    </div>
+    </section>
   );
 }

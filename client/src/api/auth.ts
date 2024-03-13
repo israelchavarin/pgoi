@@ -1,5 +1,7 @@
-export async function registerUser(data = {}) {
-  const res = await fetch("http://localhost:3000/api/registration", {
+const API = "http://localhost:3000/api";
+
+export async function postRequest(URL = "", data = {}) {
+  const res = await fetch(`${API}/${URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

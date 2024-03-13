@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { registerUser } from "../api/auth";
+import { postRequest } from "../api/auth";
 import type { FieldValues } from "react-hook-form";
 import { AuthContext } from "../hooks/useAuth";
 import { User } from "../types";
@@ -12,30 +12,56 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [regErrors, setRegErrors] = useState<string | null>(null);
+  const [reqErrors, setReqErrors] = useState<string | null>(null);
 
   const signUp = async (user: FieldValues) => {
     try {
-      const res = await registerUser(user);
+      const res = await postRequest("registration", user);
       if (res.status !== 201) throw new Error(res.error || "Unknown error");
-      // Not using !res.ok because the API returns status code 201 when successful
       setUser(res.data);
       setIsAuthenticated(true);
     } catch (error) {
       // Necessary to Extract the error message from the error object
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
-      setRegErrors(errorMessage);
+      setReqErrors(errorMessage);
     }
   };
+
+  const signIn = async (loginData: FieldValues) => {
+    try {
+      const res = await postRequest("login", loginData);
+      if (res.status !== 200) throw new Error(res.error || "Unknown error");
+      console.log(res);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      setReqErrors(errorMessage);
+    }
+  };
+
+  useEffect(() => {
+    let timer: number | null = null;
+    if (reqErrors) {
+      timer = window.setTimeout(() => {
+        setReqErrors(null);
+      }, 6000);
+    }
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, [reqErrors]);
 
   return (
     <AuthContext.Provider
       value={{
         signUp,
+        signIn,
         user,
         isAuthenticated,
-        regErrors,
+        reqErrors,
       }}
     >
       {children}
