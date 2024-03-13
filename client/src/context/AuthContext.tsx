@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import Cookies from "js-cookie";
 import { postRequest } from "../api/auth";
 import type { FieldValues } from "react-hook-form";
 import { AuthContext } from "../hooks/useAuth";
@@ -33,6 +34,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const res = await postRequest("login", loginData);
       if (res.status !== 200) throw new Error(res.error || "Unknown error");
       console.log(res);
+      setIsAuthenticated(true);
+      setUser(res.data);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
@@ -53,6 +56,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
   }, [reqErrors]);
+
+  // When app loads
+  useEffect(() => {
+    const cookies = Cookies.get();
+    console.log(cookies);
+  }, []);
 
   return (
     <AuthContext.Provider
