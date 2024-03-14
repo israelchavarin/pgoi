@@ -32,6 +32,7 @@ export default function LoginPage() {
             type='email'
             placeholder='Email'
             {...register("email", { required: true })}
+            autoFocus
           />
           {errors.email && <p className='text-red-500'>Email required</p>}
           <FormInput
