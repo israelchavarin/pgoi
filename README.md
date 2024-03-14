@@ -1,4 +1,5 @@
 Documentation of the API:
 [Postman URL](https://documenter.getpostman.com/view/32819772/2s9Yyy7xnT)
+Note: under modification, some endpoints not working at the moment
 
-To run the application with docker, go to the root of the project in a terminal and run the command: docker compose up
+Docker option no longer available at the moment.
