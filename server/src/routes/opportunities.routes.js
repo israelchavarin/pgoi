@@ -10,16 +10,12 @@ import { investSchema } from "../schemas/opportunities.schema.js";
 
 const router = Router();
 
-router.get("/profile/opportunities", authRequired, getOpportunities);
+router.get("/opportunities", authRequired, getOpportunities);
 
-router.get(
-  "/profile/opportunities/:opportunity_id",
-  authRequired,
-  getOpportunity
-);
+router.get("/opportunities/:opportunity_id", authRequired, getOpportunity);
 
 router.patch(
-  "/profile/opportunities/:opportunity_id/invest",
+  "/opportunities/:opportunity_id/invest",
   authRequired,
   validateSchema(investSchema),
   updateOpportunity
