@@ -5,6 +5,10 @@ import { UserAccess } from "../models/UserAccess.js";
 import { UserBalance } from "../models/UserBalance.js";
 import { sequelize } from "../database/database.js";
 import { createAccessToken } from "../libs/jwt.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const registerUser = async (req, res) => {
   const t = await sequelize.transaction();
@@ -120,7 +124,7 @@ export const showProfile = async (req, res) => {
   try {
     const userFound = await User.findOne({
       where: { user_id: req.userInfo.id },
-      attributes: ["given_name", "family_name"],
+      attributes: ["user_id", "given_name", "family_name"],
     });
 
     if (!userFound)
@@ -129,6 +133,7 @@ export const showProfile = async (req, res) => {
     return res.status(200).json({
       status: 200,
       data: {
+        user_id: userFound.user_id,
         given_name: userFound.given_name,
         family_name: userFound.family_name,
       },
@@ -136,4 +141,35 @@ export const showProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 500, error: error.message });
   }
+};
+
+// request being executed everytime a page loads
+export const verifyToken = async (req, res) => {
+  const token = req.headers.authorization.replace("Bearer ", "");
+
+  if (!token)
+    return res.status(401).json({ status: 401, error: "Unauthorized" });
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decodedToken) => {
+    if (err)
+      return res.status(401).json({ status: 401, error: "Unauthorized" });
+
+    const userFound = await User.findOne({
+      where: { user_id: decodedToken.id },
+      attributes: ["user_id", "given_name", "family_name"],
+    });
+
+    // the token was valid but no user was found
+    if (!userFound)
+      return res.status(401).json({ status: 401, error: "Unauthorized" });
+
+    return res.status(200).json({
+      status: 200,
+      data: {
+        user_id: userFound.user_id,
+        given_name: userFound.given_name,
+        family_name: userFound.family_name,
+      },
+    });
+  });
 };

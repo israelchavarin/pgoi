@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 const API = "http://localhost:3000/api";
 
 export async function postRequest(URL = "", data = {}) {
@@ -12,5 +13,25 @@ export async function postRequest(URL = "", data = {}) {
     // may be blocked by CORS policy if in the backend,
     // the cors config doesn't include the property credentials: true
   });
+  return res.json();
+}
+
+export async function getRequest(URL = "") {
+  const cookies = Cookies.get();
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    Authorization: "",
+  };
+
+  if (cookies.token) {
+    headers["Authorization"] = `Bearer ${cookies.token}`;
+  }
+
+  const res = await fetch(`${API}/${URL}`, {
+    headers: headers,
+    credentials: "include",
+  });
+
   return res.json();
 }

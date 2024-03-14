@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import Cookies from "js-cookie";
-import { postRequest } from "../api/auth";
+import { postRequest, getRequest } from "../api/auth";
 import type { FieldValues } from "react-hook-form";
 import { AuthContext } from "../hooks/useAuth";
 import { User } from "../types";
@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [reqErrors, setReqErrors] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const signUp = async (user: FieldValues) => {
     try {
@@ -33,7 +34,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const res = await postRequest("login", loginData);
       if (res.status !== 200) throw new Error(res.error || "Unknown error");
-      console.log(res);
       setIsAuthenticated(true);
       setUser(res.data);
     } catch (error) {
@@ -59,8 +59,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // When app loads
   useEffect(() => {
-    const cookies = Cookies.get();
-    console.log(cookies);
+    async function checkLogin() {
+      const cookies = Cookies.get();
+
+      if (!cookies.token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return setUser(null);
+      }
+
+      try {
+        const res = await getRequest("verifytoken");
+        if (!res.data) {
+          setIsAuthenticated(false);
+          setLoading(false);
+          return setUser(null);
+        }
+
+        setIsAuthenticated(true);
+        setLoading(false);
+        setUser(res.data);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        setUser(null);
+      }
+    }
+    checkLogin();
   }, []);
 
   return (
@@ -71,6 +96,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         isAuthenticated,
         reqErrors,
+        loading,
       }}
     >
       {children}
