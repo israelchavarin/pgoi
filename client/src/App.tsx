@@ -6,30 +6,37 @@ import OrdersPage from "./pages/OrdersPage";
 import HomePage from "./pages/HomePage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
 import ProtectedRoute from "./ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/registration' element={<RegistrationPage />} />
+        <main className='container mx-auto px-10'>
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/registration' element={<RegistrationPage />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path='/profile' element={<h1>Profile</h1>} />
-            <Route path='/deposit' element={<h1>Deposit</h1>} />
-            <Route path='/orders' element={<OrdersPage />} />
-            <Route path='/opportunities' element={<OpportunitiesPage />} />
-            <Route path='/opportunities/:id' element={<OpportunitiesPage />} />
-            <Route
-              path='/opportunities/:id/invest'
-              element={<OpportunitiesPage />}
-            />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path='/profile' element={<h1>Profile</h1>} />
+              <Route path='/deposit' element={<h1>Deposit</h1>} />
+              <Route path='/orders' element={<OrdersPage />} />
+              <Route path='/opportunities' element={<OpportunitiesPage />} />
+              <Route
+                path='/opportunities/:id'
+                element={<OpportunitiesPage />}
+              />
+              <Route
+                path='/opportunities/:id/invest'
+                element={<OpportunitiesPage />}
+              />
+            </Route>
 
-          <Route path='*' element={<Navigate to='/' replace />} />
-        </Routes>
+            <Route path='*' element={<Navigate to='/' replace />} />
+          </Routes>
+        </main>
       </BrowserRouter>
     </AuthProvider>
   );

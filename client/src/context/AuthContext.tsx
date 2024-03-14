@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { postRequest, getRequest } from "../api/auth";
 import type { FieldValues } from "react-hook-form";
 import { AuthContext } from "../hooks/useAuth";
-import { User } from "../types";
+import type { User } from "../types";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -41,6 +41,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         error instanceof Error ? error.message : "An unknown error occurred";
       setReqErrors(errorMessage);
     }
+  };
+
+  const logout = () => {
+    Cookies.remove("token");
+    setIsAuthenticated(false);
+    setUser(null);
   };
 
   useEffect(() => {
@@ -93,6 +99,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         signUp,
         signIn,
+        logout,
         user,
         isAuthenticated,
         reqErrors,

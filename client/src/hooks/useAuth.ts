@@ -1,10 +1,11 @@
 import { createContext, useContext } from "react";
 import type { FieldValues } from "react-hook-form";
-import { User } from "../types";
+import type { User } from "../types";
 
 interface AuthContextType {
   signUp: (user: FieldValues) => Promise<void>;
   signIn: (loginData: FieldValues) => Promise<void>;
+  logout: () => void;
   user: User | null;
   isAuthenticated: boolean;
   reqErrors: string | null;
@@ -14,6 +15,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   signUp: async () => {}, // Initial dummy implementation
   signIn: async () => {},
+  logout: () => {},
   user: null,
   isAuthenticated: false,
   reqErrors: null,

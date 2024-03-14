@@ -1,17 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRequest } from "../api/auth";
-
-type Opportunity = {
-  available: boolean;
-  createdAt: string;
-  description: string;
-  investment_limit: number;
-  minimum_investment: number;
-  opportunity_id: string;
-  opportunity_name: string;
-  profit_percentage: string;
-  updatedAt: string;
-};
+import OpportunityCard from "../components/OpportunityCard";
+import type { Opportunity } from "../types";
 
 export default function OpportunitiesPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -32,14 +22,13 @@ export default function OpportunitiesPage() {
   if (opportunities.length === 0) return <h1>No opportunities available.</h1>;
 
   return (
-    <>
-      <h1>List of Opportunities</h1>
-      {opportunities.map((oppty) => (
-        <div key={oppty.opportunity_id}>
-          <h3>{oppty.opportunity_name}</h3>
-          <p>{oppty.description}</p>
-        </div>
-      ))}
-    </>
+    <section>
+      <h2 className='text-2xl text-center'>Available opportunities</h2>
+      <div className='grid grid-cols-3 gap-2'>
+        {opportunities.map((oppty) => (
+          <OpportunityCard oppty={oppty} key={oppty.opportunity_id} />
+        ))}
+      </div>
+    </section>
   );
 }
