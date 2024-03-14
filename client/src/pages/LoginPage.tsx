@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import FormInput from "../components/FormInput";
 import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const {
@@ -9,11 +10,18 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { signIn, reqErrors } = useAuth();
+  const { signIn, reqErrors, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = handleSubmit((data) => {
     signIn(data);
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/opportunities");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <section className='flex h-[calc(100vh-6.25rem)] items-center justify-center'>

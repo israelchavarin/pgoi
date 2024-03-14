@@ -15,7 +15,7 @@ export default function RegistrationPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/orders");
+      navigate("/opportunities");
     }
   }, [isAuthenticated, navigate]);
 
@@ -39,6 +39,7 @@ export default function RegistrationPage() {
           type='text'
           placeholder='Given name'
           {...register("given_name", { required: true })}
+          autoFocus
         />
         {errors.given_name && (
           <p className='text-red-500'>Given name required</p>
