@@ -35,3 +35,15 @@ export async function getRequest(URL = "") {
 
   return res.json();
 }
+
+export async function patchRequest(URL = "", data = {}) {
+  const res = await fetch(`${API}/${URL}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+    credentials: "include",
+  });
+  return res.json();
+}

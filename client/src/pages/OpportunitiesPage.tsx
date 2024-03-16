@@ -5,13 +5,17 @@ import type { Opportunity } from "../types";
 
 export default function OpportunitiesPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [error, setError] = useState("");
 
   const getOpportunities = async () => {
     try {
       const res = await getRequest("opportunities");
+      if (res.status !== 200) throw new Error(res.error || "Unknown error");
       setOpportunities(res.data);
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      setError(errorMessage);
     }
   };
 
@@ -20,6 +24,8 @@ export default function OpportunitiesPage() {
   }, []);
 
   if (opportunities.length === 0) return <h1>No opportunities available.</h1>;
+
+  if (error) return <h1>{error}</h1>;
 
   return (
     <section>
