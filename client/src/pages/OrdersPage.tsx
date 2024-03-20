@@ -40,7 +40,7 @@ export default function OrdersPage() {
   return (
     <section>
       <h2 className='text-2xl text-center'>Current orders</h2>
-      <div className='grid grid-cols-3 gap-2'>
+      <div className='grid sm:grid-cols-2 lg:grid-cols-3 gap-2'>
         {orders.map((order) => (
           <div key={order.order_id}>
             <h3>Opportunity: {order.opportunity_id}</h3>

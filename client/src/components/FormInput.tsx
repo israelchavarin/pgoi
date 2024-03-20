@@ -15,7 +15,7 @@ const FormInput = forwardRef<HTMLInputElement, ComponentProps<"input">>(
         {...props}
         autoComplete={autocomplete}
         ref={ref}
-        className='w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2'
+        className='w-full bg-stone-700 text-white px-4 py-2 rounded-md my-2'
       />
     );
   }

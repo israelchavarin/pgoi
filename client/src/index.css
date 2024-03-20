@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 body {
-  background-color: #202020;
-  color: white;
+  background-color: white;
+  color: black;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px rgb(68 64 60) inset;
 }

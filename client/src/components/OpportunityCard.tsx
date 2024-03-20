@@ -5,6 +5,8 @@ import type { Opportunity } from "../types";
 import FormInput from "./FormInput";
 import { patchRequest } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import StyledButton from "./StyledButton";
+import ErrorP from "./ErrorP";
 
 export default function OpportunityCard({ oppty }: { oppty: Opportunity }) {
   const [visibleForm, setVisibleForm] = useState(false);
@@ -38,21 +40,20 @@ export default function OpportunityCard({ oppty }: { oppty: Opportunity }) {
   });
 
   return (
-    <article className='bg-zinc-800 max-w-md w-full p-10 rounded-md'>
+    <article className='bg-orange-300 max-w-md w-full p-10 rounded-md'>
       <h2 className='text-lg font-bold'>{oppty.opportunity_name}</h2>
-      <p className='text-slate-300'>{oppty.description}</p>
+      <p>{oppty.description}</p>
       <p>Investment limit: {oppty.investment_limit}</p>
       <p>Minimum investment: {oppty.minimum_investment}</p>
       <p>Profit percentage: {oppty.profit_percentage}%</p>
       {visibleInvestButton && (
-        <button
+        <StyledButton
           onClick={() => {
             setVisibleForm(true);
             setVisibleInvestButton(false);
           }}
-        >
-          Invest
-        </button>
+          text='Invest'
+        />
       )}
       {visibleForm && (
         <form onSubmit={onSubmit}>
@@ -65,15 +66,13 @@ export default function OpportunityCard({ oppty }: { oppty: Opportunity }) {
             })}
             autoFocus
           />
-          {errors.investment_amount && (
-            <p className='text-red-500'>Amount required</p>
-          )}
+          {errors.investment_amount && <ErrorP text='Amount required' />}
           <select
             {...register("term_in_days", {
               required: true,
               valueAsNumber: true,
             })}
-            className='w-full bg-zinc-700 text-white px-3 py-2 rounded-md my-2'
+            className='w-full bg-stone-700 text-white px-3 py-2 rounded-md my-2'
           >
             <option value=''>Term in days</option>
             <option value={30}>30</option>
@@ -81,9 +80,9 @@ export default function OpportunityCard({ oppty }: { oppty: Opportunity }) {
             <option value={180}>180</option>
             <option value={365}>365</option>
           </select>
-          {errors.term_in_days && <p className='text-red-500'>Term required</p>}
+          {errors.term_in_days && <ErrorP text='Term required' />}
           <div className='flex justify-between'>
-            <button
+            <StyledButton
               type='button'
               onClick={() => {
                 setVisibleForm(false);
@@ -91,14 +90,13 @@ export default function OpportunityCard({ oppty }: { oppty: Opportunity }) {
                 reset();
                 setError("");
               }}
-            >
-              Cancel
-            </button>
-            <button>Make investment</button>
+              text='Cancel'
+            />
+            <button className='text-orange-950'>Make investment</button>
           </div>
         </form>
       )}
-      {error && <p className='text-red-500'>{error}</p>}
+      {error && <ErrorP text={error} />}
     </article>
   );
 }
